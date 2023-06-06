@@ -5,6 +5,7 @@ import { TOKEN_MINT } from 'config';
 import useProgram from 'hooks/useProgram';
 import { stake, unstake } from 'libs/methods';
 import { useState } from 'react';
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const tokenMint = new PublicKey(TOKEN_MINT);
 
@@ -31,8 +32,13 @@ export default function Home() {
     await unstake(wallet, program, tokenMint, new BN(0), true);
   }
   return (
-    <div>
-      Home
+    <div className='flex flex-col gap-2'>
+      <WalletMultiButton />
+      Amount: <input value={amount} onChange={(e) => setAmount(parseFloat(e.target.value) || 0.0)} type="number" />
+      <button onClick={handleStake}>Stake</button>
+      <button onClick={handleUnstake}>Unstake</button>
+      <button onClick={handleClaim}>Claim</button>
+
     </div>
   )
 }
