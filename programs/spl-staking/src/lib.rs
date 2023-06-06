@@ -6,7 +6,7 @@ use anchor_spl::token::{Transfer, transfer};
 
 use crate::ins::*;
 
-declare_id!("GfDz6c7PsBK3yFLXAaxmmXsXH1A69j4EFcZ7RUrJMW13");
+declare_id!("6sE2DYexXa8oBPfGjgoCkNceHgH3xXnXD2nBz7i3NTWE");
 
 #[program]
 pub mod spl_staking {
