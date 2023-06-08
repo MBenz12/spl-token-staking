@@ -24,6 +24,7 @@ export default function Admin() {
   const fetchMint = async (mint: PublicKey) => {
     const { decimals } = await getMint(connection, mint);
     setDecimals(Math.pow(10, decimals));
+    return Math.pow(10, decimals);
   }
 
   const handleInitializeVault = async () => {
@@ -60,11 +61,13 @@ export default function Admin() {
   }, [tokenMintAddress]);
   
   useEffect(() => {
-    if (vault) {
-      setTokenMintAddress(vault.tokenMint.toString());
-      setDailyPayoutAmount(vault.dailyPayoutAmount.toNumber());
-      fetchMint(vault.tokenMint);
-    }
+    (async () => {
+      if (vault) {
+        setTokenMintAddress(vault.tokenMint.toString());
+        const decimals = await fetchMint(vault.tokenMint);
+        setDailyPayoutAmount(vault.dailyPayoutAmount.toNumber() / decimals);
+      }
+    })()
   }, [vault]);
 
   return (
