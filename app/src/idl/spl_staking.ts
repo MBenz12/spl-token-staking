@@ -103,7 +103,7 @@ export type SplStaking = {
         },
         {
           "name": "authorityAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -154,12 +154,12 @@ export type SplStaking = {
         },
         {
           "name": "vaultAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "authorityAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -200,12 +200,12 @@ export type SplStaking = {
         },
         {
           "name": "vaultAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "stakerAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -246,12 +246,12 @@ export type SplStaking = {
         },
         {
           "name": "vaultAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "stakerAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -441,7 +441,7 @@ export const IDL: SplStaking = {
         },
         {
           "name": "authorityAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -492,12 +492,12 @@ export const IDL: SplStaking = {
         },
         {
           "name": "vaultAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "authorityAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -538,12 +538,12 @@ export const IDL: SplStaking = {
         },
         {
           "name": "vaultAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "stakerAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -584,12 +584,12 @@ export const IDL: SplStaking = {
         },
         {
           "name": "vaultAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "stakerAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {

@@ -103,7 +103,7 @@
         },
         {
           "name": "authorityAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -154,12 +154,12 @@
         },
         {
           "name": "vaultAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "authorityAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -200,12 +200,12 @@
         },
         {
           "name": "vaultAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "stakerAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -246,12 +246,12 @@
         },
         {
           "name": "vaultAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "stakerAta",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {

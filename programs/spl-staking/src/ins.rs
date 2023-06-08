@@ -65,6 +65,7 @@ pub struct Fund<'info> {
   pub vault_ata: Account<'info, TokenAccount>,
 
   #[account(
+    mut,
     associated_token::authority = authority,
     associated_token::mint = token_mint,
   )]
@@ -97,12 +98,14 @@ pub struct Drain<'info> {
   pub token_mint: Account<'info, Mint>,
 
   #[account(
+    mut,
     associated_token::authority = vault,
     associated_token::mint = token_mint,
   )]
   pub vault_ata: Account<'info, TokenAccount>,
 
   #[account(
+    mut,
     associated_token::authority = authority,
     associated_token::mint = token_mint,
   )]
@@ -160,12 +163,14 @@ pub struct Stake<'info> {
   pub token_mint: Account<'info, Mint>,
 
   #[account(
+    mut,
     associated_token::authority = vault,
     associated_token::mint = token_mint,
   )]
   pub vault_ata: Account<'info, TokenAccount>,
 
   #[account(
+    mut,
     associated_token::authority = staker,
     associated_token::mint = token_mint,
   )]
@@ -202,12 +207,14 @@ pub struct Unstake<'info> {
   pub token_mint: Account<'info, Mint>,
 
   #[account(
+    mut,
     associated_token::authority = vault,
     associated_token::mint = token_mint,
   )]
   pub vault_ata: Account<'info, TokenAccount>,
 
   #[account(
+    mut,
     associated_token::authority = staker,
     associated_token::mint = token_mint,
   )]
