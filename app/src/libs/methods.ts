@@ -3,6 +3,7 @@ import { WalletContextState } from '@solana/wallet-adapter-react';
 import { PublicKey, Transaction } from '@solana/web3.js';
 import { SplStaking } from 'idl/spl_staking';
 import { getCreateUserInstruction, getDrainInstruction, getFundInstruction, getInitializeVaultInstruction, getStakeInstruction, getUnstakeInstruction, getUpdateVaultInstruction } from './instructions';
+import { getUserPda } from './utils';
 
 export async function callCreateUser(
   wallet: WalletContextState,
@@ -126,6 +127,14 @@ export async function stake(
   if (!wallet.publicKey) return;
   try {
     const transaction = new Transaction();
+    const [user] = getUserPda(wallet.publicKey);
+    const userData = await program.account.user.fetchNullable(user);
+
+    if (!userData) {
+      transaction.add(
+        await getCreateUserInstruction(program, wallet.publicKey)
+      );
+    }
 
     transaction.add(
       await getStakeInstruction(program, wallet.publicKey, tokenMint, amount)
