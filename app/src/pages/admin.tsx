@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { BN } from '@project-serum/anchor';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { TOKEN_MINT } from 'config';
 import useProgram from 'hooks/useProgram';
@@ -17,27 +17,23 @@ export default function Admin() {
   const [dailyPayoutAmount, setDailyPayoutAmount] = useState(0);
   const [amount, setAmount] = useState(0);
   const [reload, setReload] = useState({});
-  const { vault } = useFetchVault(reload);
-  const { connection } = useConnection();
-  const [decimals, setDecimals] = useState(1);
-
-  const fetchMint = async (mint: PublicKey) => {
-    const { decimals } = await getMint(connection, mint);
-    setDecimals(Math.pow(10, decimals));
-    return Math.pow(10, decimals);
-  }
+  const { vault, decimals } = useFetchVault(reload);
 
   const handleInitializeVault = async () => {
     if (!program) return;
-
-    await initializeVault(wallet, program, new PublicKey(tokenMintAddress), new BN(dailyPayoutAmount * decimals));
+    const mint = new PublicKey(tokenMintAddress);
+    let { decimals } = await getMint(program.provider.connection, mint);
+    decimals = Math.pow(10, decimals);
+    await initializeVault(wallet, program, mint, new BN(dailyPayoutAmount * decimals));
     setReload({});
   }
 
   const handleUpdateVault = async () => {
     if (!program) return;
-
-    await updateVault(wallet, program, new PublicKey(tokenMintAddress), new BN(dailyPayoutAmount * decimals));
+    const mint = new PublicKey(tokenMintAddress);
+    let { decimals } = await getMint(program.provider.connection, mint);
+    decimals = Math.pow(10, decimals);
+    await updateVault(wallet, program, mint, new BN(dailyPayoutAmount * decimals));
     setReload({});
   }
 
@@ -55,19 +51,12 @@ export default function Admin() {
     setReload({});
   }
 
-  useEffect(() => {
-    const tokenMint = new PublicKey(tokenMintAddress);
-    fetchMint(tokenMint);
-  }, [tokenMintAddress]);
   
   useEffect(() => {
-    (async () => {
-      if (vault) {
-        setTokenMintAddress(vault.tokenMint.toString());
-        const decimals = await fetchMint(vault.tokenMint);
-        setDailyPayoutAmount(vault.dailyPayoutAmount.toNumber() / decimals);
-      }
-    })()
+    if (vault) {
+      setTokenMintAddress(vault.tokenMint.toString());
+      setDailyPayoutAmount(vault.dailyPayoutAmount.toNumber() / decimals);
+    }    
   }, [vault]);
 
   return (

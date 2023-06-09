@@ -1,29 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { BN } from '@project-serum/anchor';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
+import { useWallet } from '@solana/wallet-adapter-react';
 import useProgram from 'hooks/useProgram';
 import { stake, unstake } from 'libs/methods';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import useFetchVault from 'hooks/useFetchVault';
-import { getMint } from '@solana/spl-token';
 import useEarnedReward from 'hooks/useEarnedReward';
 import { UserData, VaultData } from 'types';
 
 export default function Home() {
   const wallet = useWallet();
-  const { connection } = useConnection();
   const program = useProgram();
   const [amount, setAmount] = useState(0);
   const [reload, setReload] = useState({});
-  const { vault, user, balance } = useFetchVault(reload);
-  const [decimals, setDecimals] = useState(1);
-  const fetchMint = async (mint: PublicKey) => {
-    const { decimals } = await getMint(connection, mint);
-    setDecimals(Math.pow(10, decimals));
-  }
-
+  const { vault, user, balance, decimals } = useFetchVault(reload);
 
   const handleStake = async () => {
     if (!program || !vault) return;
@@ -44,11 +35,6 @@ export default function Home() {
     await unstake(wallet, program, vault.tokenMint, new BN(0), true);
   }
 
-  useEffect(() => {
-    if (vault) {
-      fetchMint(vault.tokenMint);
-    }
-  }, [vault]);
   return (
     <div className='flex flex-col gap-2'>
       <WalletMultiButton />
