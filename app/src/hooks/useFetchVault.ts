@@ -1,29 +1,43 @@
 import { useState, useEffect, useCallback } from 'react';
-import { VaultData } from 'types';
+import { UserData, VaultData } from 'types';
 import useProgram from './useProgram';
-import { getVaultPda } from 'libs/utils';
+import { getUserPda, getVaultPda } from 'libs/utils';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
 
 const useFetchVault = (reload: {}) => {
-    const [vault, setVault] = useState<VaultData>();
-    const program = useProgram();
+  const [vault, setVault] = useState<VaultData>();
+  const [user, setUser] = useState<UserData>();
+  const [balance, setBalance] = useState(0);
+  const program = useProgram();
+  const { publicKey } = useWallet();
 
-    const fetchVault = useCallback(async () => {
-      if (!program) return;
-      try {
-        const [vault] = getVaultPda();
-        const vaultData = await program.account.vault.fetch(vault);
-        // @ts-ignore
-        setVault(vaultData);
-      } catch (error) {
-        console.log(error);
+  const fetchVault = useCallback(async () => {
+    if (!program || !publicKey) return;
+    try {
+      const [vault] = getVaultPda();
+      const vaultData = await program.account.vault.fetchNullable(vault);
+      setVault(vaultData as VaultData);
+
+      if (vaultData) {
+        const ata = getAssociatedTokenAddressSync(vaultData.tokenMint, publicKey);
+        const { value: { uiAmount } } = await program.provider.connection.getTokenAccountBalance(ata);
+        setBalance(uiAmount || 0);
       }
-    }, [program]);
 
-    useEffect(() => {
-        fetchVault();
-    }, [program, fetchVault, reload]);
-    
-    return vault;
+      const [user] = getUserPda(publicKey);
+      const userData = await program.account.user.fetchNullable(user);
+      setUser(userData as UserData);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [program, publicKey]);
+
+  useEffect(() => {
+    fetchVault();
+  }, [program, fetchVault, reload]);
+
+  return { vault, user, balance };
 };
 
 export default useFetchVault;

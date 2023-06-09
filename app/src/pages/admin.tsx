@@ -17,7 +17,7 @@ export default function Admin() {
   const [dailyPayoutAmount, setDailyPayoutAmount] = useState(0);
   const [amount, setAmount] = useState(0);
   const [reload, setReload] = useState({});
-  const vault = useFetchVault(reload);
+  const { vault } = useFetchVault(reload);
   const { connection } = useConnection();
   const [decimals, setDecimals] = useState(1);
 
@@ -80,6 +80,12 @@ export default function Admin() {
       Amount: <input value={amount} onChange={(e) => setAmount(parseFloat(e.target.value) || 0.0)} type="number" />
       <button onClick={handleFund}>Fund</button>
       <button onClick={handleDrain}>Drain</button>
+      <div>
+        Total Staked: {vault ? vault.totalStakedAmount.toNumber() / decimals : 0}
+      </div>
+      <div>
+        Total Rewards: {vault ? vault.totalRewardAmount.toNumber() / decimals : 0}
+      </div>
     </div>
   )
 }

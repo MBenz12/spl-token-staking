@@ -5,7 +5,15 @@ export type VaultData = {
   authority: PublicKey,
   tokenMint: PublicKey,
   totalRewardAmount: BN,
-  totalStakeAmount: BN,
+  totalStakedAmount: BN,
   dailyPayoutAmount: BN,
   bump: number,
+}
+
+export type UserData = {
+  key: PublicKey;
+  stakedAmount: BN;
+  lastUpdateTime: BN;
+  earnedAmount: BN;
+  bump: number;
 }
