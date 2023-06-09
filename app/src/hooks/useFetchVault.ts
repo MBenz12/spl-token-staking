@@ -18,7 +18,6 @@ const useFetchVault = (reload: {}) => {
     try {
       const [vault] = getVaultPda();
       const vaultData = await program.account.vault.fetchNullable(vault);
-      setVault(vaultData as VaultData);
 
       if (vaultData) {
         const { decimals } = await getMint(program.provider.connection, vaultData.tokenMint);
@@ -27,7 +26,7 @@ const useFetchVault = (reload: {}) => {
         const { value: { uiAmount } } = await program.provider.connection.getTokenAccountBalance(ata);
         setBalance(uiAmount || 0);
       }
-
+      setVault(vaultData as VaultData);
       const [user] = getUserPda(publicKey);
       const userData = await program.account.user.fetchNullable(user);
       setUser(userData as UserData);
