@@ -1,8 +1,8 @@
-mod state;
 mod ins;
+mod state;
 
 use anchor_lang::prelude::*;
-use anchor_spl::token::{Transfer, transfer};
+use anchor_spl::token::{transfer, Transfer};
 
 use crate::ins::*;
 
@@ -16,6 +16,7 @@ pub mod spl_staking {
         ctx: Context<InitializeVault>,
         token_mint: Pubkey,
         daily_payout_amount: u64,
+        reward_bump: u8,
     ) -> Result<()> {
         let vault = &mut ctx.accounts.vault;
 
@@ -25,6 +26,7 @@ pub mod spl_staking {
         vault.authority = ctx.accounts.authority.key();
         vault.total_reward_amount = 0;
         vault.total_staked_amount = 0;
+        vault.reward_bump = reward_bump;
 
         Ok(())
     }
@@ -38,7 +40,7 @@ pub mod spl_staking {
 
         vault.token_mint = token_mint;
         vault.daily_payout_amount = daily_payout_amount;
-        
+
         Ok(())
     }
 
@@ -55,7 +57,7 @@ pub mod spl_staking {
 
     pub fn fund(ctx: Context<Fund>, amount: u64) -> Result<()> {
         let vault = &mut ctx.accounts.vault;
-        
+
         vault.total_reward_amount = vault.total_reward_amount.checked_add(amount).unwrap();
 
         transfer(
@@ -63,7 +65,7 @@ pub mod spl_staking {
                 ctx.accounts.token_program.to_account_info(),
                 Transfer {
                     from: ctx.accounts.authority_ata.to_account_info(),
-                    to: ctx.accounts.vault_ata.to_account_info(),
+                    to: ctx.accounts.reward_vault_ata.to_account_info(),
                     authority: ctx.accounts.authority.to_account_info(),
                 },
             ),
@@ -74,22 +76,19 @@ pub mod spl_staking {
 
     pub fn drain(ctx: Context<Drain>, amount: u64) -> Result<()> {
         let vault = &mut ctx.accounts.vault;
-        
+
         vault.total_reward_amount = vault.total_reward_amount.checked_sub(amount).unwrap();
         let bump = vault.bump;
-        let seeds = [
-            b"vault".as_ref(),
-            &[bump]
-        ];
+        let seeds = [b"reward_vault".as_ref(), &[bump]];
         let signer = &[&seeds[..]];
 
         transfer(
             CpiContext::new_with_signer(
                 ctx.accounts.token_program.to_account_info(),
                 Transfer {
-                    from: ctx.accounts.vault_ata.to_account_info(),
+                    from: ctx.accounts.reward_vault_ata.to_account_info(),
                     to: ctx.accounts.authority_ata.to_account_info(),
-                    authority: ctx.accounts.vault.to_account_info(),
+                    authority: ctx.accounts.reward_vault.to_account_info(),
                 },
                 signer,
             ),
@@ -103,7 +102,7 @@ pub mod spl_staking {
         let user = &mut ctx.accounts.user;
 
         user.update(vault);
-        
+
         vault.total_staked_amount = vault.total_staked_amount.checked_add(amount).unwrap();
         user.staked_amount = user.staked_amount.checked_add(amount).unwrap();
 
@@ -126,35 +125,60 @@ pub mod spl_staking {
         let user = &mut ctx.accounts.user;
 
         user.update(vault);
-        let mut amount = amount;
         if is_claim == true {
-            amount = user.earned_amount;
+            let amount = user.earned_amount;
             vault.total_reward_amount = vault.total_reward_amount.checked_sub(amount).unwrap();
             user.earned_amount = 0;
+
+            let bump = vault.reward_bump;
+            let seeds = [b"reward_vault".as_ref(), &[bump]];
+            let signer = &[&seeds[..]];
+
+            transfer(
+                CpiContext::new_with_signer(
+                    ctx.accounts.token_program.to_account_info(),
+                    Transfer {
+                        from: ctx.accounts.reward_vault_ata.to_account_info(),
+                        to: ctx.accounts.staker_ata.to_account_info(),
+                        authority: ctx.accounts.reward_vault.to_account_info(),
+                    },
+                    signer,
+                ),
+                amount,
+            )?;
         } else {
             vault.total_staked_amount = vault.total_staked_amount.checked_sub(amount).unwrap();
             user.staked_amount = user.staked_amount.checked_sub(amount).unwrap();
+
+            let bump = vault.bump;
+            let seeds = [b"vault".as_ref(), &[bump]];
+            let signer = &[&seeds[..]];
+
+            transfer(
+                CpiContext::new_with_signer(
+                    ctx.accounts.token_program.to_account_info(),
+                    Transfer {
+                        from: ctx.accounts.vault_ata.to_account_info(),
+                        to: ctx.accounts.staker_ata.to_account_info(),
+                        authority: ctx.accounts.vault.to_account_info(),
+                    },
+                    signer,
+                ),
+                amount,
+            )?;
         }
+        Ok(())
+    }
 
-        let bump = vault.bump;
-        let seeds = [
-            b"vault".as_ref(),
-            &[bump]
-        ];
-        let signer = &[&seeds[..]];
+    pub fn close_pda(ctx: Context<ClosePda>) -> Result<()> {
+        let dest_account_info = ctx.accounts.signer.to_account_info();
+        let source_account_info = ctx.accounts.pda.to_account_info();
+        let dest_starting_lamports = dest_account_info.lamports();
+        **dest_account_info.lamports.borrow_mut() = dest_starting_lamports
+            .checked_add(source_account_info.lamports())
+            .unwrap();
+        **source_account_info.lamports.borrow_mut() = 0;
 
-        transfer(
-            CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
-                Transfer {
-                    from: ctx.accounts.vault_ata.to_account_info(),
-                    to: ctx.accounts.staker_ata.to_account_info(),
-                    authority: ctx.accounts.vault.to_account_info(),
-                },
-                signer,
-            ),
-            amount,
-        )?;
         Ok(())
     }
 }

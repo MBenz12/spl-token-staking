@@ -4,7 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { TOKEN_MINT } from 'config';
 import useProgram from 'hooks/useProgram';
-import { drain, fund, initializeVault, updateVault } from 'libs/methods';
+import { callClosePdas, drain, fund, initializeVault, updateVault } from 'libs/methods';
 import { useEffect, useState } from 'react';
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import useFetchVault from 'hooks/useFetchVault';
@@ -51,6 +51,17 @@ export default function Admin() {
     setReload({});
   }
 
+  const handleCloseAll = async () => {
+    if (!program) return;
+
+    const vaults = await program.account.vault.all();
+    const users = await program.account.user.all();
+    await callClosePdas(wallet, program, [
+      ...vaults.map(vault => vault.publicKey), 
+      ...users.map(user => user.publicKey),
+    ]);
+    setReload({});
+  }
   
   useEffect(() => {
     if (vault) {
@@ -69,6 +80,7 @@ export default function Admin() {
       Amount: <input value={amount} onChange={(e) => setAmount(parseFloat(e.target.value) || 0.0)} type="number" />
       <button onClick={handleFund}>Fund</button>
       <button onClick={handleDrain}>Drain</button>
+      <button onClick={handleCloseAll}>Close All</button>
       <div>
         Total Staked: {vault ? vault.totalStakedAmount.toNumber() / decimals : 0}
       </div>

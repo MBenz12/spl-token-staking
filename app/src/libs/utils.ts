@@ -12,6 +12,18 @@ export const getVaultPda = (
   );
 };
 
+export const getRewardVaultPda = (
+  programId: PublicKey = new PublicKey(idl.metadata.address)
+) => {
+  return PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("reward_vault"),
+    ],
+    programId
+  );
+};
+
+
 export const getUserPda = (
   user: PublicKey,
   programId: PublicKey = new PublicKey(idl.metadata.address)

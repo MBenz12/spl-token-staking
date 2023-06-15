@@ -29,6 +29,10 @@ export type SplStaking = {
         {
           "name": "dailyPayoutAmount",
           "type": "u64"
+        },
+        {
+          "name": "rewardBump",
+          "type": "u8"
         }
       ]
     },
@@ -92,12 +96,22 @@ export type SplStaking = {
           "isSigner": false
         },
         {
+          "name": "rewardVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenMint",
           "isMut": false,
           "isSigner": false
         },
         {
           "name": "vaultAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "rewardVaultAta",
           "isMut": true,
           "isSigner": false
         },
@@ -148,12 +162,17 @@ export type SplStaking = {
           "isSigner": false
         },
         {
+          "name": "rewardVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenMint",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "vaultAta",
+          "name": "rewardVaultAta",
           "isMut": true,
           "isSigner": false
         },
@@ -235,6 +254,11 @@ export type SplStaking = {
           "isSigner": false
         },
         {
+          "name": "rewardVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "user",
           "isMut": true,
           "isSigner": false
@@ -246,6 +270,11 @@ export type SplStaking = {
         },
         {
           "name": "vaultAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "rewardVaultAta",
           "isMut": true,
           "isSigner": false
         },
@@ -270,6 +299,27 @@ export type SplStaking = {
           "type": "bool"
         }
       ]
+    },
+    {
+      "name": "closePda",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "pda",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -300,6 +350,10 @@ export type SplStaking = {
           },
           {
             "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "rewardBump",
             "type": "u8"
           }
         ]
@@ -367,6 +421,10 @@ export const IDL: SplStaking = {
         {
           "name": "dailyPayoutAmount",
           "type": "u64"
+        },
+        {
+          "name": "rewardBump",
+          "type": "u8"
         }
       ]
     },
@@ -430,12 +488,22 @@ export const IDL: SplStaking = {
           "isSigner": false
         },
         {
+          "name": "rewardVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenMint",
           "isMut": false,
           "isSigner": false
         },
         {
           "name": "vaultAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "rewardVaultAta",
           "isMut": true,
           "isSigner": false
         },
@@ -486,12 +554,17 @@ export const IDL: SplStaking = {
           "isSigner": false
         },
         {
+          "name": "rewardVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenMint",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "vaultAta",
+          "name": "rewardVaultAta",
           "isMut": true,
           "isSigner": false
         },
@@ -573,6 +646,11 @@ export const IDL: SplStaking = {
           "isSigner": false
         },
         {
+          "name": "rewardVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "user",
           "isMut": true,
           "isSigner": false
@@ -584,6 +662,11 @@ export const IDL: SplStaking = {
         },
         {
           "name": "vaultAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "rewardVaultAta",
           "isMut": true,
           "isSigner": false
         },
@@ -608,6 +691,27 @@ export const IDL: SplStaking = {
           "type": "bool"
         }
       ]
+    },
+    {
+      "name": "closePda",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "pda",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -638,6 +742,10 @@ export const IDL: SplStaking = {
           },
           {
             "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "rewardBump",
             "type": "u8"
           }
         ]
