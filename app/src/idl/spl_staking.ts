@@ -23,6 +23,10 @@ export type SplStaking = {
       ],
       "args": [
         {
+          "name": "name",
+          "type": "string"
+        },
+        {
           "name": "tokenMint",
           "type": "publicKey"
         },
@@ -328,6 +332,10 @@ export type SplStaking = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
           {
             "name": "authority",
             "type": "publicKey"
@@ -415,6 +423,10 @@ export const IDL: SplStaking = {
       ],
       "args": [
         {
+          "name": "name",
+          "type": "string"
+        },
+        {
           "name": "tokenMint",
           "type": "publicKey"
         },
@@ -720,6 +732,10 @@ export const IDL: SplStaking = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
           {
             "name": "authority",
             "type": "publicKey"

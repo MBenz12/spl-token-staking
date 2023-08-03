@@ -23,6 +23,10 @@
       ],
       "args": [
         {
+          "name": "name",
+          "type": "string"
+        },
+        {
           "name": "tokenMint",
           "type": "publicKey"
         },
@@ -329,6 +333,10 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "name",
+            "type": "string"
+          },
+          {
             "name": "authority",
             "type": "publicKey"
           },
@@ -389,6 +397,6 @@
     }
   ],
   "metadata": {
-    "address": "6sE2DYexXa8oBPfGjgoCkNceHgH3xXnXD2nBz7i3NTWE"
+    "address": "FGwXhUXfWG2gNkrJ5WyLCv7XKCsBq18AKGiRs95KF7qd"
   }
 }

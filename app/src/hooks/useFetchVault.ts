@@ -5,7 +5,7 @@ import { getUserPda, getVaultPda } from 'libs/utils';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { getAssociatedTokenAddressSync, getMint } from '@solana/spl-token';
 
-const useFetchVault = (reload: {}) => {
+const useFetchVault = (reload: {}, name: string) => {
   const [vault, setVault] = useState<VaultData>();
   const [decimals, setDecimals] = useState(1);
   const [user, setUser] = useState<UserData>();
@@ -16,7 +16,7 @@ const useFetchVault = (reload: {}) => {
   const fetchVault = useCallback(async () => {
     if (!program || !publicKey) return;
     try {
-      const [vault] = getVaultPda();
+      const [vault] = getVaultPda(name);
       const vaultData = await program.account.vault.fetchNullable(vault);
 
       if (vaultData) {
@@ -33,11 +33,11 @@ const useFetchVault = (reload: {}) => {
     } catch (error) {
       console.log(error);
     }
-  }, [program, publicKey]);
+  }, [program, publicKey, name]);
 
   useEffect(() => {
     fetchVault();
-  }, [program, fetchVault, reload]);
+  }, [program, fetchVault, reload, name]);
 
   return { vault, user, balance, decimals };
 };

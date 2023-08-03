@@ -29,6 +29,7 @@ export async function callCreateUser(
 export async function initializeVault(
   wallet: WalletContextState,
   program: Program<SplStaking>,
+  name: string,
   tokenMint: PublicKey,
   dailyPayoutAmount: BN,
 ) {
@@ -37,7 +38,7 @@ export async function initializeVault(
     const transaction = new Transaction();
 
     transaction.add(
-      await getInitializeVaultInstruction(program, wallet.publicKey, tokenMint, dailyPayoutAmount)
+      await getInitializeVaultInstruction(program, wallet.publicKey, name, tokenMint, dailyPayoutAmount)
     );
 
     const txSignature = await wallet.sendTransaction(transaction, program.provider.connection, { skipPreflight: true });
@@ -52,6 +53,7 @@ export async function initializeVault(
 export async function updateVault(
   wallet: WalletContextState,
   program: Program<SplStaking>,
+  name: string,
   tokenMint: PublicKey,
   dailyPayoutAmount: BN,
 ) {
@@ -60,7 +62,7 @@ export async function updateVault(
     const transaction = new Transaction();
 
     transaction.add(
-      await getUpdateVaultInstruction(program, wallet.publicKey, tokenMint, dailyPayoutAmount)
+      await getUpdateVaultInstruction(program, wallet.publicKey, name, tokenMint, dailyPayoutAmount)
     );
 
     const txSignature = await wallet.sendTransaction(transaction, program.provider.connection, { skipPreflight: true });
@@ -75,6 +77,7 @@ export async function updateVault(
 export async function fund(
   wallet: WalletContextState,
   program: Program<SplStaking>,
+  name: string,
   tokenMint: PublicKey,
   amount: BN,
 ) {
@@ -83,7 +86,7 @@ export async function fund(
     const transaction = new Transaction();
 
     transaction.add(
-      await getFundInstruction(program, wallet.publicKey, tokenMint, amount)
+      await getFundInstruction(program, wallet.publicKey, name, tokenMint, amount)
     );
 
     const txSignature = await wallet.sendTransaction(transaction, program.provider.connection, { skipPreflight: true });
@@ -98,6 +101,7 @@ export async function fund(
 export async function drain(
   wallet: WalletContextState,
   program: Program<SplStaking>,
+  name: string,
   tokenMint: PublicKey,
   amount: BN,
 ) {
@@ -106,7 +110,7 @@ export async function drain(
     const transaction = new Transaction();
 
     transaction.add(
-      await getDrainInstruction(program, wallet.publicKey, tokenMint, amount)
+      await getDrainInstruction(program, wallet.publicKey, name, tokenMint, amount)
     );
 
     const txSignature = await wallet.sendTransaction(transaction, program.provider.connection, { skipPreflight: true });
@@ -121,6 +125,7 @@ export async function drain(
 export async function stake(
   wallet: WalletContextState,
   program: Program<SplStaking>,
+  name: string,
   tokenMint: PublicKey,
   amount: BN,
 ) {
@@ -137,7 +142,7 @@ export async function stake(
     }
 
     transaction.add(
-      await getStakeInstruction(program, wallet.publicKey, tokenMint, amount)
+      await getStakeInstruction(program, name, wallet.publicKey, tokenMint, amount)
     );
 
     const txSignature = await wallet.sendTransaction(transaction, program.provider.connection, { skipPreflight: true });
@@ -152,6 +157,7 @@ export async function stake(
 export async function unstake(
   wallet: WalletContextState,
   program: Program<SplStaking>,
+  name: string,
   tokenMint: PublicKey,
   amount: BN,
   isClaim: boolean,
@@ -161,7 +167,7 @@ export async function unstake(
     const transaction = new Transaction();
 
     transaction.add(
-      await getUnstakeInstruction(program, wallet.publicKey, tokenMint, amount, isClaim)
+      await getUnstakeInstruction(program, name, wallet.publicKey, tokenMint, amount, isClaim)
     );
 
     const txSignature = await wallet.sendTransaction(transaction, program.provider.connection, { skipPreflight: true });

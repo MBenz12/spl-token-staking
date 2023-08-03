@@ -8,31 +8,33 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import useFetchVault from 'hooks/useFetchVault';
 import useEarnedReward from 'hooks/useEarnedReward';
 import { UserData, VaultData } from 'types';
+import { VAULT_NAME } from 'config';
 
 export default function Home() {
   const wallet = useWallet();
   const program = useProgram();
   const [amount, setAmount] = useState(0);
   const [reload, setReload] = useState({});
-  const { vault, user, balance, decimals } = useFetchVault(reload);
+  const [name] = useState(VAULT_NAME);
+  const { vault, user, balance, decimals } = useFetchVault(reload, name);
 
   const handleStake = async () => {
     if (!program || !vault) return;
 
-    await stake(wallet, program, vault.tokenMint, new BN(amount * decimals));
+    await stake(wallet, program, VAULT_NAME, vault.tokenMint, new BN(amount * decimals));
     setReload({});
   }
 
   const handleUnstake = async () => {
     if (!program || !vault) return;
 
-    await unstake(wallet, program, vault.tokenMint, new BN(amount * decimals), false);
+    await unstake(wallet, program, VAULT_NAME, vault.tokenMint, new BN(amount * decimals), false);
   }
 
   const handleClaim = async () => {
     if (!program || !vault) return;
 
-    await unstake(wallet, program, vault.tokenMint, new BN(0), true);
+    await unstake(wallet, program, VAULT_NAME, vault.tokenMint, new BN(0), true);
   }
 
   return (

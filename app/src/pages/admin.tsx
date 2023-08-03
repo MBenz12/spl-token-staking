@@ -17,14 +17,15 @@ export default function Admin() {
   const [dailyPayoutAmount, setDailyPayoutAmount] = useState(0);
   const [amount, setAmount] = useState(0);
   const [reload, setReload] = useState({});
-  const { vault, decimals } = useFetchVault(reload);
+  const [name, setName] = useState("");
+  const { vault, decimals } = useFetchVault(reload, name);
 
   const handleInitializeVault = async () => {
     if (!program) return;
     const mint = new PublicKey(tokenMintAddress);
     let { decimals } = await getMint(program.provider.connection, mint);
     decimals = Math.pow(10, decimals);
-    await initializeVault(wallet, program, mint, new BN(dailyPayoutAmount * decimals));
+    await initializeVault(wallet, program, name, mint, new BN(dailyPayoutAmount * decimals));
     setReload({});
   }
 
@@ -33,21 +34,21 @@ export default function Admin() {
     const mint = new PublicKey(tokenMintAddress);
     let { decimals } = await getMint(program.provider.connection, mint);
     decimals = Math.pow(10, decimals);
-    await updateVault(wallet, program, mint, new BN(dailyPayoutAmount * decimals));
+    await updateVault(wallet, program, name, mint, new BN(dailyPayoutAmount * decimals));
     setReload({});
   }
 
   const handleFund = async () => {
     if (!program || !vault) return;
 
-    await fund(wallet, program, vault.tokenMint, new BN(amount * decimals));
+    await fund(wallet, program, name, vault.tokenMint, new BN(amount * decimals));
     setReload({});
   }
 
   const handleDrain = async () => {
     if (!program || !vault) return;
 
-    await drain(wallet, program, vault.tokenMint, new BN(amount * decimals));
+    await drain(wallet, program, name, vault.tokenMint, new BN(amount * decimals));
     setReload({});
   }
 
@@ -57,36 +58,41 @@ export default function Admin() {
     const vaults = await program.account.vault.all();
     const users = await program.account.user.all();
     await callClosePdas(wallet, program, [
-      ...vaults.map(vault => vault.publicKey), 
+      ...vaults.map(vault => vault.publicKey),
       ...users.map(user => user.publicKey),
     ]);
     setReload({});
   }
-  
+
   useEffect(() => {
     if (vault) {
       setTokenMintAddress(vault.tokenMint.toString());
       setDailyPayoutAmount(vault.dailyPayoutAmount.toNumber() / decimals);
-    }    
+    }
   }, [vault, decimals]);
 
   return (
     <div className='flex flex-col gap-2'>
       <WalletMultiButton />
+      Vault Name: <input value={name} onChange={(e) => setName(e.target.value)} type="text" />
       Mint: <input value={tokenMintAddress} onChange={(e) => setTokenMintAddress(e.target.value)} type="text" />
       Daily Payout Amount: <input value={dailyPayoutAmount} onChange={(e) => setDailyPayoutAmount(parseFloat(e.target.value) || 0.0)} type="number" />
-      <button onClick={handleInitializeVault}>Initialize</button>
-      <button onClick={handleUpdateVault}>Update</button>
-      Amount: <input value={amount} onChange={(e) => setAmount(parseFloat(e.target.value) || 0.0)} type="number" />
-      <button onClick={handleFund}>Fund</button>
-      <button onClick={handleDrain}>Drain</button>
-      <button onClick={handleCloseAll}>Close All</button>
-      <div>
-        Total Staked: {vault ? vault.totalStakedAmount.toNumber() / decimals : 0}
-      </div>
-      <div>
-        Total Rewards: {vault ? vault.totalRewardAmount.toNumber() / decimals : 0}
-      </div>
+      {!vault && <button onClick={handleInitializeVault}>Initialize</button>}
+      {vault &&
+        <>
+          <button onClick={handleUpdateVault}>Update</button>
+          Amount: <input value={amount} onChange={(e) => setAmount(parseFloat(e.target.value) || 0.0)} type="number" />
+          <button onClick={handleFund}>Fund</button>
+          <button onClick={handleDrain}>Drain</button>
+          <button onClick={handleCloseAll}>Close All</button>
+          <div>
+            Total Staked: {vault ? vault.totalStakedAmount.toNumber() / decimals : 0}
+          </div>
+          <div>
+            Total Rewards: {vault ? vault.totalRewardAmount.toNumber() / decimals : 0}
+          </div>
+        </>
+      }
     </div>
   )
 }

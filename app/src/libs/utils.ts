@@ -2,22 +2,26 @@ import { PublicKey } from '@solana/web3.js';
 import idl from 'idl/spl_staking.json';
 
 export const getVaultPda = (
-  programId: PublicKey = new PublicKey(idl.metadata.address)
+  name: string,
+  programId: PublicKey = new PublicKey(idl.metadata.address),
 ) => {
   return PublicKey.findProgramAddressSync(
     [
       Buffer.from("vault"),
+      Buffer.from(name),
     ],
     programId
   );
 };
 
 export const getRewardVaultPda = (
-  programId: PublicKey = new PublicKey(idl.metadata.address)
+  name: string,
+  programId: PublicKey = new PublicKey(idl.metadata.address),
 ) => {
   return PublicKey.findProgramAddressSync(
     [
       Buffer.from("reward_vault"),
+      Buffer.from(name),
     ],
     programId
   );

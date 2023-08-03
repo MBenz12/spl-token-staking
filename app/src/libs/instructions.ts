@@ -7,14 +7,16 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, getAssociatedTokenAddres
 export const getInitializeVaultInstruction = async (
   program: Program<SplStaking>,
   authority: PublicKey,
+  name: string,
   tokenMint: PublicKey,
   dailyPayoutAmount: BN,
 ) => {
-  const [vault] = getVaultPda();
-  const [, rewardBump] = getRewardVaultPda();
+  const [vault] = getVaultPda(name);
+  const [, rewardBump] = getRewardVaultPda(name);
 
   return await program.methods
     .initializeVault(
+      name,
       tokenMint,
       dailyPayoutAmount,
       rewardBump,
@@ -30,10 +32,11 @@ export const getInitializeVaultInstruction = async (
 export const getUpdateVaultInstruction = async (
   program: Program<SplStaking>,
   authority: PublicKey,
+  name: string,
   tokenMint: PublicKey,
   dailyPayoutAmount: BN,
 ) => {
-  const [vault] = getVaultPda();
+  const [vault] = getVaultPda(name);
 
   return await program.methods
     .updateVault(
@@ -66,11 +69,12 @@ export const getCreateUserInstruction = async (
 export const getFundInstruction = async (
   program: Program<SplStaking>,
   authority: PublicKey,
+  name: string,
   tokenMint: PublicKey,
   amount: BN,
 ) => {
-  const [vault] = getVaultPda();
-  const [rewardVault] = getRewardVaultPda();
+  const [vault] = getVaultPda(name);
+  const [rewardVault] = getRewardVaultPda(name);
   const vaultAta = getAssociatedTokenAddressSync(tokenMint, vault, true);
   const rewardVaultAta = getAssociatedTokenAddressSync(tokenMint, rewardVault, true);
   const authorityAta = getAssociatedTokenAddressSync(tokenMint, authority);
@@ -95,11 +99,12 @@ export const getFundInstruction = async (
 export const getDrainInstruction = async (
   program: Program<SplStaking>,
   authority: PublicKey,
+  name: string,
   tokenMint: PublicKey,
   amount: BN,
 ) => {
-  const [vault] = getVaultPda();
-  const [rewardVault] = getRewardVaultPda();
+  const [vault] = getVaultPda(name);
+  const [rewardVault] = getRewardVaultPda(name);
   const rewardVaultAta = getAssociatedTokenAddressSync(tokenMint, rewardVault, true);
   const authorityAta = getAssociatedTokenAddressSync(tokenMint, authority);
   return await program.methods
@@ -118,11 +123,12 @@ export const getDrainInstruction = async (
 
 export const getStakeInstruction = async (
   program: Program<SplStaking>,
+  name: string,
   staker: PublicKey,
   tokenMint: PublicKey,
   amount: BN,
 ) => {
-  const [vault] = getVaultPda();
+  const [vault] = getVaultPda(name);
   const [user] = getUserPda(staker);
   const vaultAta = getAssociatedTokenAddressSync(tokenMint, vault, true);
   const stakerAta = getAssociatedTokenAddressSync(tokenMint, staker);
@@ -142,13 +148,14 @@ export const getStakeInstruction = async (
 
 export const getUnstakeInstruction = async (
   program: Program<SplStaking>,
+  name: string,
   staker: PublicKey,
   tokenMint: PublicKey,
   amount: BN,
   isClaim: boolean,
 ) => {
-  const [vault] = getVaultPda();
-  const [rewardVault] = getRewardVaultPda();
+  const [vault] = getVaultPda(name);
+  const [rewardVault] = getRewardVaultPda(name);
   const [user] = getUserPda(staker);
   const vaultAta = getAssociatedTokenAddressSync(tokenMint, vault, true);
   const rewardVaultAta = getAssociatedTokenAddressSync(tokenMint, rewardVault, true);
