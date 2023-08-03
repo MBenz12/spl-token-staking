@@ -14,12 +14,14 @@ pub mod spl_staking {
 
     pub fn initialize_vault(
         ctx: Context<InitializeVault>,
+        name: String,
         token_mint: Pubkey,
         daily_payout_amount: u64,
         reward_bump: u8,
     ) -> Result<()> {
         let vault = &mut ctx.accounts.vault;
 
+        vault.name = name;
         vault.bump = *ctx.bumps.get("vault").unwrap();
         vault.token_mint = token_mint;
         vault.daily_payout_amount = daily_payout_amount;
@@ -79,7 +81,8 @@ pub mod spl_staking {
 
         vault.total_reward_amount = vault.total_reward_amount.checked_sub(amount).unwrap();
         let bump = vault.bump;
-        let seeds = [b"reward_vault".as_ref(), &[bump]];
+        let name = vault.name.clone();
+        let seeds = [b"reward_vault".as_ref(), name.as_ref(), &[bump]];
         let signer = &[&seeds[..]];
 
         transfer(
@@ -131,7 +134,8 @@ pub mod spl_staking {
             user.earned_amount = 0;
 
             let bump = vault.reward_bump;
-            let seeds = [b"reward_vault".as_ref(), &[bump]];
+            let name = vault.name.clone();
+            let seeds = [b"reward_vault".as_ref(), name.as_ref(), &[bump]];
             let signer = &[&seeds[..]];
 
             transfer(
@@ -151,7 +155,8 @@ pub mod spl_staking {
             user.staked_amount = user.staked_amount.checked_sub(amount).unwrap();
 
             let bump = vault.bump;
-            let seeds = [b"vault".as_ref(), &[bump]];
+            let name = vault.name.clone();
+            let seeds = [b"vault".as_ref(), name.as_ref(), &[bump]];
             let signer = &[&seeds[..]];
 
             transfer(

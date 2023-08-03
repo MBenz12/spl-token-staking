@@ -3,6 +3,8 @@ use anchor_lang::solana_program::clock::Clock;
 
 #[account]
 pub struct Vault {
+    pub name: String,
+
     pub authority: Pubkey,
 
     pub token_mint: Pubkey,

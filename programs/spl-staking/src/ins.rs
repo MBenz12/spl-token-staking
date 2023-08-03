@@ -6,6 +6,7 @@ use anchor_spl::{
 };
 
 #[derive(Accounts)]
+#[instruction(name: String)]
 pub struct InitializeVault<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
@@ -16,6 +17,7 @@ pub struct InitializeVault<'info> {
       space = Vault::LEN + 8,
       seeds = [
         b"vault".as_ref(),
+        name.as_ref(),
       ],
       bump,
     )]
@@ -33,6 +35,7 @@ pub struct UpdateVault<'info> {
       mut,
       seeds = [
         b"vault".as_ref(),
+        vault.name.as_ref(),
       ],
       bump = vault.bump,
     )]
@@ -48,6 +51,7 @@ pub struct Fund<'info> {
       mut,
       seeds = [
         b"vault".as_ref(),
+        vault.name.as_ref(),
       ],
       bump = vault.bump,
     )]
@@ -56,6 +60,7 @@ pub struct Fund<'info> {
     #[account(
       seeds = [
         b"reward_vault".as_ref(),
+        vault.name.as_ref(),
       ],
       bump = vault.reward_bump,
     )]
@@ -105,6 +110,7 @@ pub struct Drain<'info> {
       mut,
       seeds = [
         b"vault".as_ref(),
+        vault.name.as_ref(),
       ],
       bump = vault.bump,
     )]
@@ -113,6 +119,7 @@ pub struct Drain<'info> {
     #[account(
       seeds = [
         b"reward_vault".as_ref(),
+        vault.name.as_ref(),
       ],
       bump = vault.reward_bump,
     )]
@@ -167,6 +174,7 @@ pub struct Stake<'info> {
       mut,
       seeds = [
         b"vault".as_ref(),
+        vault.name.as_ref(),
       ],
       bump = vault.bump,
     )]
@@ -211,6 +219,7 @@ pub struct Unstake<'info> {
       mut,
       seeds = [
         b"vault".as_ref(),
+        vault.name.as_ref(),
       ],
       bump = vault.bump,
     )]
@@ -219,6 +228,7 @@ pub struct Unstake<'info> {
     #[account(
       seeds = [
         b"reward_vault".as_ref(),
+        vault.name.as_ref(),
       ],
       bump = vault.reward_bump,
     )]
@@ -263,7 +273,10 @@ pub struct Unstake<'info> {
 
 #[derive(Accounts)]
 pub struct ClosePda<'info> {
-    #[account(mut, address = "3qWq2ehELrVJrTg2JKKERm67cN6vYjm1EyhCEzfQ6jMd".parse::<Pubkey>().unwrap())]
+    #[account(
+      mut, 
+      // address = "3qWq2ehELrVJrTg2JKKERm67cN6vYjm1EyhCEzfQ6jMd".parse::<Pubkey>().unwrap()
+    )]
     pub signer: Signer<'info>,
 
     /// CHECK:
