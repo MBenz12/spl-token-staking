@@ -84,7 +84,7 @@ export default function Admin() {
           Amount: <input value={amount} onChange={(e) => setAmount(parseFloat(e.target.value) || 0.0)} type="number" />
           <button onClick={handleFund}>Fund</button>
           <button onClick={handleDrain}>Drain</button>
-          <button onClick={handleCloseAll}>Close All</button>
+          {/* <button onClick={handleCloseAll}>Close All</button> */}
           <div>
             Total Staked: {vault ? vault.totalStakedAmount.toNumber() / decimals : 0}
           </div>
