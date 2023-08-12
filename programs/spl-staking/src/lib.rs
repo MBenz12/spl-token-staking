@@ -80,7 +80,7 @@ pub mod spl_staking {
         let vault = &mut ctx.accounts.vault;
 
         vault.total_reward_amount = vault.total_reward_amount.checked_sub(amount).unwrap();
-        let bump = vault.bump;
+        let bump = vault.reward_bump;
         let name = vault.name.clone();
         let seeds = [b"reward_vault".as_ref(), name.as_ref(), &[bump]];
         let signer = &[&seeds[..]];
